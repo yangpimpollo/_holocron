@@ -116,3 +116,47 @@
 </html>
 ```
 <img src="../../../res/pool/ss001.png" width="100%" style="float: left; margin-right: 100px;">
+
+
+7. para el login remplazamos el codigo anterior por
+
+```php
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+
+        // Buscamos al usuario por su nombre
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE name = ?");
+        $stmt->execute([$username]);
+        $user = $stmt->fetch();
+
+        // Verificamos si existe y si la contraseña coincide
+        // NOTA: Si usas password_hash para registrar, aquí usarías password_verify()
+        if ($user && $password === $user['pass']) {
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_name'] = $user['name'];
+            
+            echo "¡Bienvenido, " . htmlspecialchars($user['name']) . "!";
+            // header("Location: dashboard.php"); // Redirigir a una página privada
+        } else {
+            echo "Usuario o contraseña incorrectos.";
+        }
+    }
+```
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login PHP</title>
+</head>
+<body>
+    <h2>Iniciar Sesión</h2>
+    <form action="" method="POST">
+        <input type="text" name="username" placeholder="Usuario" required><br><br>
+        <input type="password" name="password" placeholder="Contraseña" required><br><br>
+        <button type="submit">Entrar</button>
+    </form>
+</body>
+</html>
+```
