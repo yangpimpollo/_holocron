@@ -41,7 +41,7 @@
     VALUES ('Fulano de Tal', 'fulano@ejemplo.com');
 ```
 
-5. usemos php para introducir datos dentro de try despues de la conecci{on} colocamos
+5. usemos php para introducir datos dentro de try despues de la conección colocamos
 ```php
 // Insertar un usuario
     $sql = "INSERT INTO usuarios (nombre, email) VALUES (:nom, :em)";
@@ -57,3 +57,62 @@
 |----|:--------------:|:---------------------:|
 |  1 |  Fulano de Tal |  'fulano@ejemplo.com' |
 |  2 |     Maria      |   'maria@ejemplo.com' |
+
+6. ahora para hacer un crud mas dinamico remplazamos el codigo anterior por
+```php
+    // 2. Lógica para INSERTAR si se envió el formulario
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['nombre'])) {
+        $sql = "INSERT INTO usuarios (nombre, email) VALUES (:nom, :em)";
+        $stmt = $pdo->prepare($sqlInsert);
+        $stmt->execute([
+            ':nom' => $_POST['nombre'],
+            ':em'  => $_POST['email']
+        ]);
+        header("Location: index.php"); // Recargar para limpiar el formulario
+    }
+
+    // 3. Lógica para LEER (Select)
+    $usuarios = $pdo->query("SELECT * FROM usuarios ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
+```
+
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi App con Postgres</title>
+    <style>
+        table { width: 50%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
+
+    <h2>Registrar Usuario</h2>
+    <form method="POST">
+        <input type="text" name="nombre" placeholder="Nombre" required>
+        <input type="email" name="email" placeholder="Correo" required>
+        <button type="submit">Guardar</button>
+    </form>
+
+    <h2>Lista de Usuarios en Postgres</h2>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Email</th>
+        </tr>
+        <?php foreach ($usuarios as $u): ?>
+        <tr>
+            <td><?= $u['id'] ?></td>
+            <td><?= htmlspecialchars($u['nombre']) ?></td>
+            <td><?= htmlspecialchars($u['email']) ?></td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+
+</body>
+</html>
+```
+<img src="../../../res/pool/ss001.png" width="100%" style="float: left; margin-right: 100px;">
