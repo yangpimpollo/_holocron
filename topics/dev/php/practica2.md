@@ -68,7 +68,49 @@ echo $test->saludar();
 ```
 4. creamos `bootstrap.php` insertamos `<?php require_once __DIR__ . '/vendor/autoload.php'; ?>` modificamos en index `require_once __DIR__ . '/bootstrap.php';` recargamos debe mostrar *"¡La autocarga de PSR-4 funciona correctamente!"*.
 
-## Ejercicio 4 - Estructura del Proyecto
+## Ejercicio 4 - Configuración de variables de entorno
+1. creamos archivos `.env`, `.env.example`, `.gitignore` dentro del ultimo ponemos `/vendor` y `.env` para no subir a remoto dentro de .env colocamos nuestras variables de entorno, ponemos uno de prueba `SECRET_TEXT="Hello yang pimpollo, this is a secret message!"`.
+   
+2. instalamos vlucas para *leer archivos .env* ejecutando en consola `composer require vlucas/phpdotenv` vemos que se añadio a composer.json
+3. para usar vamos a index.php y ponemos ver impreso la variable. una vez que se carga `$dotenv->load()`se cargan en la memoria no es necesario volver a cargarlas se podrian usar en cualquierparte
+
+```php
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+echo $_ENV['SECRET_TEXT'] . "\n";
+```
+## Ejercicio 5 - Archivo de arranque bootstrap.php
+1. archivo encargado de preparar el entorno creamos `bootstrap.php` y ponemos todo lo necesario en index en ella y en index colocamos para llamar a bootstrap
+```php
+# bootstrap.php -----------------------------------------------------------------
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+# index.php ---------------------------------------------------------------------
+<?php
+require_once __DIR__ . '/bootstrap.php';
+use Yangpimpollo\Crud\Prueba;
+
+$test = new Prueba();
+echo $test->saludar();
+
+# src/Prueba.php ----------------------------------------------------------------
+<?php
+
+namespace Yangpimpollo\Crud;
+
+class Prueba {
+    public function saludar() {
+        echo $_ENV['SECRET_TEXT'] . "\n";
+        return "¡La autocarga de PSR-4 funciona correctamente!";
+    }
+}
+```
+> Hello yang pimpollo, this is a secret message! ¡La autocarga de PSR-4 funciona correctamente!
+
+## Ejercicio 6 - Estructura del Proyecto
 ```
 test3/
 ├── vendor/     
@@ -77,10 +119,37 @@ test3/
 │   ├── database/
 │   ├── model/
 │   ├── view/
-│   └── Prueba.php           
+│   └── Prueba.php
+├── .env
+├── .env.example
+├── .gitignore
 ├── bootstrap.php        
-├── README.md      
+├── composer.json
+├── composer.lock    
 ├── index.php                
-└── composer.json            
+└── README.md        
 ```
-## Ejercicio 5 - Estructura del Proyecto
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
