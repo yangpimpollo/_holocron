@@ -130,7 +130,8 @@ test3/
 └── README.md        
 ```
 
-
+## Ejercicio 7 - Clase Connection.php
+1. Creamos `Connection.php` dentro de `src/database` 
 
 
 
