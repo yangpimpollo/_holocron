@@ -70,6 +70,19 @@
     }
     ```
 
-7. video 78
+7. video 85
+    - leer escribir ficheros
+    ```php
+    <?php
 
+    $archivo fopen("text_file.txt", "r");     // r:read  w:write   x:create   a+=read and write
+
+    while(!feof ($archivo)) (
+        $contanido fgets ($archivo);
+        echo $content."<br/>";
+    }
+    
+    fwrite($file, "I'm text inserted from PHP");    // para escribir debe cambia permiso a a+
+    fclose ($Archivo);
+    ```
 
