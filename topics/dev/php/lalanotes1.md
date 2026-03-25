@@ -272,7 +272,7 @@ Route::get('/saludo', [SaludoController::class, 'index']);
 
 
 
-## Ejercicio 5: Formularios + Recibir datos del usuario
+
 
 
          
