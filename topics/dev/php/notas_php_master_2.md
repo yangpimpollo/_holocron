@@ -85,6 +85,31 @@ CREATE TABLE likes (
     CONSTRAINT fk_likes_images FOREIGN KEY (image_id) 
         REFERENCES images(id) ON DELETE CASCADE
 );
+
+
+
+--------------------------------------------------
+
+CREATE TABLE productos (
+    codigo_barras VARCHAR(50) PRIMARY KEY,
+    nombre_articulo TEXT NOT NULL,
+    precio NUMERIC(10, 2) CHECK (precio > 0)
+);
+
+INSERT INTO productos (codigo_barras, nombre_articulo, precio) 
+VALUES 
+    ('ABC-001', 'Monitor Gamer 24"', 4500.50),
+    ('ABC-002', 'Teclado Mecánico RGB', 1200.00),
+    ('ABC-003', 'Mouse Óptico Inalámbrico', 550.75),
+    ('ABC-004', 'Auriculares con Micrófono', 890.00),
+    ('ABC-005', 'Alfombrilla XL', 320.25);
+
+INSERT INTO productos (codigo_barras, nombre_articulo, precio) 
+VALUES 
+	('ABC-006', 'RAM DRR4 corssar', 2500.00);
+
+
+    
 ```
 - conectamos en el archivo .env (ini o mnakefile)
 ```ini
