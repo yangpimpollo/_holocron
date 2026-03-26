@@ -7,6 +7,20 @@
 4. lanzamos el servidor en la carpeta test1 `php -S localhost:8000`
 5. visualizamos en la web `http://localhost:8000` 
 6. tambien podemos ejecutar en consola `php index.php` para ver en consola
+7. subimos a gitHub
+```bash
+git init
+git add .
+git commit -m "Mi primer commit"
+git branch -M main
+git remote add origin https://github.com/yangpimpollo/test3.git
+git push -u origin main
+
+git clone git@github.com:yangpimpollo/test3.git
+```
+8. al clonar de gitHub tener en cuenta que ya no se tendra el archivo `.env` ni `vendor`, la primera se crea manualmente y el otro 
+ ejecutamos `composer install` buscara el archivo composer.lock e instala las versiones exactas de las librerías.
+
 
 ## Ejercicio 2 - conectar con postgresql
 1. activamos la BD desde la consola `sudo service postgresql start`
@@ -131,14 +145,141 @@ test3/
 ```
 
 ## Ejercicio 7 - Clase Connection.php
-1. Creamos `Connection.php` dentro de `src/database` 
+1. Creamos `Connection.php` dentro de `src/database` usaremos el patron singleton 
+```php
+<?php
+
+namespace Yangpimpollo\Crud\database;
+
+use PDO;
+use PDOException;
+
+class Connection {
+    // Aquí guardaremos la única instancia de PDO como fuciona singleton
+    //      1. código pide la instancia
+    //      2. revisa $instance es nulo?
+    //      3. nulo, crea el new PDO y guarda
+    //      4. Si ya tiene, devuelve lo que guardó antes
+    // No importa cuántas veces llames a getInstance(), la conexión a Postgres solo se hace UNA vez.
+    //      $db1 = Connection::getInstance();
+    //      $db2 = Connection::getInstance();         ambos son lo mismo   $db1 === $db2
 
 
+    // se puede de esta manera:      private static $instance = null; 
+    // pero esta es mas rigurosa declaración de tipo (Type Hinting)
 
 
+    private static ?PDO $instance = null;  // unica instancia
+    private function __construct() {}      // Constructor privado: impide crear la instancia con 'new' desde fuera
+    private function __clone() {}          // evitar clonación
+    public function __wakeup() { throw new \Exception("No se permite deserializar la conexión"); }
 
+    public static function getInstance(): PDO {
+        if (self::$instance === null) {
+            try {
+                $host = $_ENV['DB_HOST'];
+                $db   = $_ENV['DB_DATABASE'];
+                $user = $_ENV['DB_USERNAME'];
+                $pass = $_ENV['DB_PASSWORD'];
+                $port = $_ENV['DB_PORT'];
 
+                $dsn = "pgsql:host=$host;port=$port;dbname=$db;";
+                $options = [
+                    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES   => false,
+                    PDO::ATTR_PERSISTENT         => false,
+                ];
+                
+                self::$instance = new PDO($dsn, $user, $pass, $options);
+                echo "¡Conectado a Postgres en WSL!";
 
+            } catch (PDOException $e) {
+                die("Error de conexión: " . $e->getMessage());
+            }
+        }
+        return self::$instance;
+    }  
+}    
+```
+en index probamos nos saldra `¡Conectado a Postgres en WSL!`
+```
+use Yangpimpollo\Crud\database\Connection;
+$db = Connection::getInstance();
+```
+
+## Ejercicio 8 - Diagrama de Flujo del Modelo 
+La arquitectura que aplicaremos es Model–view–controller (MVC) donde tendra las siguientes capas:
+usuario-->vista-->enrutador-->controlador-->modelo-->base datos
+
+- solo modelo puede conectarse a la BD tiene una instancia de ella pero no conoce controlador
+- el controlador instancia a modelo pero no conoce a la BD su funcion principal es transportar info 
+
+## Ejercicio 9 - Modelo de Usuario
+Creamos `User.php` en src/model este se encargara de toda la logica recibira array de datos del controlador 
+se encargara de guardarlo o autenticarlo en la BD
+```php
+<?php
+
+namespace Yangpimpollo\Crud\model;
+
+use Yangpimpollo\Crud\database\Connection;
+use PDOException;
+
+class User {
+    private $id;
+    private $user_name;
+    private $pass;
+    private $email;
+    private $role = 'user';
+    private $db;
+
+    public function __construct() { $this->db = Connection::getInstance();}
+
+    public function register($data) {
+        $this->user_name = $data['user_name'];
+        $this->pass = password_hash($data['pass'], PASSWORD_DEFAULT);
+        $this->email = $data['email'];
+
+        try {
+            $sql = "INSERT INTO usuarios (user_name, pass, email, role) VALUES (?, ?, ?, ?)";
+            $stmt = $this->db->prepare($sql);
+            
+            // Ejecutamos pasando los valores en orden Retorna true si tuvo éxito, false si no
+            return $stmt->execute([codigo basura
+                $this->user_name,
+                $this->pass,
+                $this->email,
+                $this->role
+            ]);
+        } catch (PDOException $e) {
+            return false;
+        }       
+    }
+}
+```
+lo probamos en index
+
+```php
+<?php
+
+    require_once __DIR__ . '/bootstrap.php';
+
+    use Yangpimpollo\Crud\model\User;
+    $us1 = new User();
+    $data = [
+        'user_name' => 'maria123',
+        'pass' => '123456',
+        'email' => 'maria123@ejemplo.com'
+    ];  
+    $result = $us1->register($data);
+    if ($result) {
+        echo "Usuario registrado exitosamente.";
+    } else {
+        echo "Error al registrar el usuario.";
+    }
+```
+saldra *Usuario registrado exitosamente.* lo podemos ver en DBeaver
 
 
 

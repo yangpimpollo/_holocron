@@ -91,4 +91,4 @@ php artisan make:seeder NombreSeeder
 php artisan migrate
 php artisan db:seed
 php artisan serve
-php artisan storage:link
+php artisan storage:link       

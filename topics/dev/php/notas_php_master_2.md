@@ -1,3 +1,5 @@
+para graficos usar mermaid; y complemento de markdown preview mermaid support
+
  13. Seccion 85 video 358
     - diseñamos la base de datos
 ```mermaid
@@ -83,4 +85,20 @@ CREATE TABLE likes (
     CONSTRAINT fk_likes_images FOREIGN KEY (image_id) 
         REFERENCES images(id) ON DELETE CASCADE
 );
+```
+- conectamos en el archivo .env (ini o mnakefile)
+```ini
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=DB_laravel
+DB_USERNAME=postgres
+DB_PASSWORD=root
+```
+
+- creamos modelos con artisan
+```bash
+php artisan make:model Image
+php artisan make:model Comment
+php artisan make:model Like
 ```
