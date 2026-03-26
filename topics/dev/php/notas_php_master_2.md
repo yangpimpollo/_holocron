@@ -2,27 +2,6 @@
     - diseñamos la base de datos
 ```mermaid
 graph LR
-    %% Definición de Estilos
-    classDef tabla fill:#fff,stroke:#333,stroke-width:1px,text-align:left;
-
-    %% Nodos con toda la información de la imagen
-    USERS["<b>USERS</b><hr/>+id: int<br/>+role: string<br/>+name: string<br/>+surname: string<br/>+nick: string<br/>+email: string<br/>+password: string<br/>+image: string<br/>+created_at: datetime<br/>+updated_at: datetime<br/>+remember_token: string"]:::tabla
-
-    IMAGES["<b>IMAGES</b><hr/>+id: int<br/>+user_id: int<br/>+image_path: string<br/>+description: string<br/>+created_at: datetime<br/>+updated_at: datetime"]:::tabla
-
-    LIKES["<b>LIKES</b><hr/>+id: int<br/>+user_id: int<br/>+image_id: int<br/>+created_at: datetime<br/>+updated_at: datetime"]:::tabla
-
-    COMMENTS["<b>COMMENTS</b><hr/>+id: int<br/>+user_id: int<br/>+image_id: int<br/>+content: text<br/>+created_at: datetime<br/>+updated_at: datetime"]:::tabla
-
-    %% Relaciones Horizontales
-    USERS --> IMAGES
-    USERS --> LIKES
-    USERS --> COMMENTS
-    IMAGES --> LIKES
-    IMAGES --> COMMENTS
-```
-```mermaid
-graph LR
     %% Configuración de Colores y Estilos
     classDef users fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
     classDef images fill:#fff3e0,stroke:#e65100,stroke-width:2px;
@@ -44,4 +23,64 @@ graph LR
     U --> C
     I --> L
     I --> C
+```
+- en DBeaver ejecutamos en la base de datos `DB_laravel`
+```sql
+-- Tabla de Usuarios, imagenes, comentarios, likes
+CREATE TABLE users (
+    id              BIGSERIAL PRIMARY KEY,
+    role            VARCHAR(20),
+    name            VARCHAR(100),
+    surname         VARCHAR(200),
+    nick            VARCHAR(100),
+    email           VARCHAR(255) UNIQUE NOT NULL,
+    password        VARCHAR(255) NOT NULL,
+    image           VARCHAR(255),
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    remember_token  VARCHAR(255)
+);
+
+CREATE TABLE images (
+    id            BIGSERIAL PRIMARY KEY,
+    user_id       BIGINT NOT NULL,
+    image_path    VARCHAR(255) NOT NULL,
+    description   TEXT,
+    created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    CONSTRAINT fk_images_users 
+        FOREIGN KEY (user_id) 
+        REFERENCES users (id) 
+        ON DELETE CASCADE
+);
+
+CREATE TABLE comments (
+    id          BIGSERIAL PRIMARY KEY,
+    user_id     BIGINT NOT NULL,
+    image_id    BIGINT NOT NULL,
+    content     TEXT NOT NULL,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_comments_users FOREIGN KEY (user_id) 
+        REFERENCES users(id) ON DELETE CASCADE,
+    
+    CONSTRAINT fk_comments_images FOREIGN KEY (image_id) 
+        REFERENCES images(id) ON DELETE CASCADE
+);
+
+CREATE TABLE likes (
+    id          BIGSERIAL PRIMARY KEY,
+    user_id     BIGINT NOT NULL,
+    image_id    BIGINT NOT NULL,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_likes_users FOREIGN KEY (user_id) 
+        REFERENCES users(id) ON DELETE CASCADE,
+    
+    CONSTRAINT fk_likes_images FOREIGN KEY (image_id) 
+        REFERENCES images(id) ON DELETE CASCADE
+);
 ```
