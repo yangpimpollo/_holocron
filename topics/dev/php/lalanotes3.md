@@ -82,6 +82,33 @@ public function up() {
 
 
 
+<div style="display: flex; gap: 20px; font-family: sans-serif; background-color: #f6f8fa; padding: 20px; border-radius: 10px;">
+
+  <div style="flex: 1; background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <div style="color: #858585; margin-bottom: 10px; font-size: 12px; font-weight: bold; border-bottom: 1px solid #333; padding-bottom: 5px;">MIGRACIÓN ANTERIOR</div>
+    <pre style="margin: 0; font-family: 'Courier New', Courier, monospace; font-size: 13px; line-height: 1.5;">
+$table->id();
+$table->string('name');
+$table->timestamps();
+    </pre>
+  </div>
+
+  <div style="flex: 1; background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-left: 4px solid #4CAF50;">
+    <div style="color: #4CAF50; margin-bottom: 10px; font-size: 12px; font-weight: bold; border-bottom: 1px solid #333; padding-bottom: 5px;">MIGRACIÓN NUEVA</div>
+    <pre style="margin: 0; font-family: 'Courier New', Courier, monospace; font-size: 13px; line-height: 1.5;">
+$table->id();
+$table->string('full_name');
+$table->string('email');
+$table->timestamps();
+    </pre>
+  </div>
+
+</div>
+
+
+
+
+
 
 
 ```bash
