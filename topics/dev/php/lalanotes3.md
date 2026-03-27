@@ -108,6 +108,28 @@ $table->timestamps();
 
 
 
+| 📄 LADO IZQUIERDO (Original) | 📄 LADO DERECHO (Nuevo) |
+| :--- | :--- |
+| ```php
+public function up() {
+    Schema::create('users', function ($table) {
+        $table->id();
+        $table->string('name');
+    });
+}
+``` | ```php
+public function up() {
+    Schema::create('users', function ($table) {
+        $table->id();
+        $table->string('full_name');
+        $table->string('email');
+    });
+}
+``` |
+
+
+
+
 
 
 
