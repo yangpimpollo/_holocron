@@ -47,92 +47,111 @@ no borramos user, sessions, migrations
 ```
 
 4. creamos nuestra primera tabla creamos una migración `php artisan make:migration build_vehicle_table`
+```php
+<?php
 
-<table width="100%">
-  <tr>
-    <td width="50%" style="vertical-align: top;">
-      <strong>LADO IZQUIERDO (Original)</strong>
-<pre><code>
-// Tu código aquí
-public function up() {
-    Schema::create('users', function ($table) {
-        $table->id();
-        $table->string('name');
-    });
-}
-</code></pre>
-    </td>
-    <td width="50%" style="vertical-align: top;">
-      <strong>LADO DERECHO (Nuevo)</strong>
-<pre><code>
-// Tu código aquí
-public function up() {
-    Schema::create('users', function ($table) {
-        $table->id();
-        $table->string('full_name');
-        $table->string('email');
-    });
-}
-</code></pre>
-    </td>
-  </tr>
-</table>
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        DB::statement("
+            CREATE TABLE vehiculos (
+                id_vehiculo SERIAL PRIMARY KEY,
+                marca VARCHAR(50) NOT NULL,
+                modelo VARCHAR(50) NOT NULL,
+                anio INT,
+                color VARCHAR(30)
+            )
+        ");
+    }
 
+    public function down(): void
+    {
+        DB::statement("DROP TABLE IF EXISTS vehiculos");
+    }
+};
 
-
-
-<div style="display: flex; gap: 20px; font-family: sans-serif; background-color: #f6f8fa; padding: 20px; border-radius: 10px;">
-
-  <div style="flex: 1; background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-    <div style="color: #858585; margin-bottom: 10px; font-size: 12px; font-weight: bold; border-bottom: 1px solid #333; padding-bottom: 5px;">MIGRACIÓN ANTERIOR</div>
-    <pre style="margin: 0; font-family: 'Courier New', Courier, monospace; font-size: 13px; line-height: 1.5;">
-$table->id();
-$table->string('name');
-$table->timestamps();
-    </pre>
-  </div>
-
-  <div style="flex: 1; background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-left: 4px solid #4CAF50;">
-    <div style="color: #4CAF50; margin-bottom: 10px; font-size: 12px; font-weight: bold; border-bottom: 1px solid #333; padding-bottom: 5px;">MIGRACIÓN NUEVA</div>
-    <pre style="margin: 0; font-family: 'Courier New', Courier, monospace; font-size: 13px; line-height: 1.5;">
-$table->id();
-$table->string('full_name');
-$table->string('email');
-$table->timestamps();
-    </pre>
-  </div>
-
-</div>
-
-
-
-
-| 📄 LADO IZQUIERDO (Original) | 📄 LADO DERECHO (Nuevo) |
-| :--- | :--- |
-| ```php
-public function up() {
-    Schema::create('users', function ($table) {
-        $table->id();
-        $table->string('name');
-    });
-}
-``` | ```php
-public function up() {
-    Schema::create('users', function ($table) {
-        $table->id();
-        $table->string('full_name');
-        $table->string('email');
-    });
-}
-``` |
-
-
-
-
-
-
-
-```bash
-php artisan make:migration clear_defaulttables
 ```
+tambien podemos crear de la manera recomendada por Laravel que servira en futuro para cualquier tipos Mysql , Oracle, etc
+esta debe usar Schema y Blueprint a diferencia de DB
+```php
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+
+public function up(): void
+{
+    Schema::create('vehiculos', function (Blueprint $table) {
+        $table->id('id_vehiculo');
+        $table->string('marca', 50);
+        $table->string('modelo', 50);
+        $table->integer('anio')->nullable();
+        $table->string('color', 30)->nullable();
+    });
+}
+
+public function down(): void
+{
+    Schema::dropIfExists('vehiculos');
+}
+```
+5. ingresamos datos se puede ingresar desde Seeder, Modelo, Controlador, Consola vamos por Seeder
+`php artisan make:seeder VehiculosSeeder`
+```php
+class VehiculosSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        DB::table('vehiculos')->insert([
+            ['marca' => 'Toyota',    'modelo' => 'Corolla',  'anio' => 2022,'color' => 'Blanco'],
+            ['marca' => 'Honda',     'modelo' => 'Civic',    'anio' => 2021,'color' => 'Negro'],
+            ['marca' => 'Ford',      'modelo' => 'Mustang',  'anio' => 1967,'color' => 'Rojo'],
+            ['marca' => 'Tesla',     'modelo' => 'Model 3',  'anio' => 2023,'color' => 'Gris'],
+            ['marca' => 'Chevrolet', 'modelo' => 'Onix',     'anio' => 2020,'color' => 'Azul'],
+        ]);
+    }
+}
+
+//------------------------------------------------
+// en database/seeders/DatabaseSeeder.php colocamos 
+public function run(): void
+{
+    $this->call([ VehiculosSeeder::class, ]);
+}
+
+//-------------------------------------------------------------
+        // DB::table('vehiculos')->insert([
+        //     ['marca' => 'BMW',       'modelo' => 'Serie 3',  'anio' => 2024,'color' => 'Gris'],
+        //     ['marca' => 'Mercedes-Benz', 'modelo' => 'Clase C', 'anio' => 2024, 'color' => 'Negro']
+        // ]);
+
+        DB::statement("
+            INSERT INTO vehiculos (marca, modelo, anio, color) 
+            VALUES ('Audi', 'A4', 2024, 'Plata'),
+                   ('Nissan', 'Sentra', 2023, 'Blanco')
+        ");
+
+
+        // INSERT INTO vehiculos (marca, modelo, anio, color) VALUES ('BYD', 'Seal', 2024, 'Azul');
+
+        // php artisan db:seed --class=VehiculosSeeder
+```
+ejecutamos `php artisan db:seed --class=VehiculosSeeder` la manera recomendada de laravel de insertar datos es mediante modelos                         
+- 
+- php artisan tinker
+- DB::table('vehiculos')->get();
+- podemos ver en DBeaver 10 carros
+
+6. ejecutamos `php artisan make:controller VehiculoController`
