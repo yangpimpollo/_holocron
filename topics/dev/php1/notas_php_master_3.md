@@ -71,15 +71,130 @@ ejemplo1_laravel/
 ```
 ## [sec 79] routing
 ### video 324-328
-    ```php
-        Route::get('/pagina1', function() {
-            $dat1 = "Hola Mundo 8 8 8";
-            return view('pagina1', compact('dat1'));
-        });
+metodos http get(conseguir), post(guardar), put(actualizar recursos), delete(eliminar recursos)
 
-        ----  pagina1.blade.php  ---------------------------    
+```php
+Route::get('/pagina1', function() {
+    $dat1 = "Hola Mundo 8 8 8";
+    return view('pagina1', compact('dat1'));
+});
+----  pagina1.blade.php  ---------------------------    
 
-        <?php echo $dat1; ?>
+<?php echo $dat1; ?>
+<h1><mark>{{ $dat1 }}</mark></h1>
+```
+le pasamos el dato a pagina1 para php `$` y para html `{{}}`
+```php
+Route::get('/pagina1/{title?}', function($title="default title") {
+    return view('pagina1', array('title'=>$title));
+});
+```
 
-        <h1><mark>{{ $dat1 }}</mark></h1>
-    ```
+```php
+Route::get('/pagina1/{title?}', function ($title = 'default title') {
+    return view('pagina1', ['title' => $title]);
+});
+
+    //  /pagina sin nada default title     /pagina/-palabra-    aperecera -palabra-    colocar title ? hace opcional
+```
+se puede pasar parametros por compact, array o with
+```php
+Route::get('', ...)->where(array(
+    'titulo' => '[a-zA-Z]+',                // minusculas , mayusculas + se puede repetir
+    'year' => '[0-9]+'                      // numeros + se puede repetir
+));
+```
+
+comandos *ARTISAN*
+```bash
+php artisan help
+php artisan list
+php artisan route:list
+php artisan make:controller TestController
+```
+
+## [sec 80] View layouts
+### video 329-335
+
+views/peliculas/listado.blade.php
+
+```php
+Route::get('listado.peliculas', function(){
+    $titulo = "listado de peliculas";
+    $listado = array("p1","p2","p3");
+    return view('peliculas.listado')>with('titulo', $titulo)->with('listado', $listado);
+});
+
+<h1><?= $titulo ?></h1>
+<h1><?= $listado[2] ?></h1>
+```
+
+```php
+{{-- comentario blade --}}
+
+    <?= isset($var1) ? $var1 : 'variable no existe' ?> 
+    {{ $var1 ?? 'variable no existe' }}      // hacer de 2 maneras
+
+    // condicioanles
+    @if(isset($var)) <h1> {{$var1}} </h1> @else <h1> variable no existe </h1> @endif    //@elseif()
+    // bucles
+    @for($i = 0; $i< 5; $i++) {{$i}} @endfor
+    <hr/>
+    @php $var1 = 0; @endphp
+    @while($var1 < 5) {{$var1}} </br> @php $var1++ @endphp @endwhile
+
+    <hr/>
+    @php $array = ['Uno', 'Dos', 'Tres']; @endphp
+    @foreach($array as $item) {{$item}} </br> @endforeach
+```
+> variable no existe                                                               
+    0 1 2 3 4                                                                        
+    <hr/>                               
+    0                                                                            
+    1                                                                                      
+    2                                                                                                         
+    3                                                                                              
+    4                                                                                
+    <hr/>                                                            
+    Uno                                                                                 
+    Dos                                                                               
+    Tres
+
+```php
+-------- layouts/app.blade.php -----------------------------------------
+<html>
+<body>
+    <nav>Menú de navegación</nav>   
+    @yield('content') {{-- Aquí se inyectará el contenido --}}
+    <footer>Pie de página</footer>
+</body>
+</html>
+-------- pagina1.blade.php --------------------------------------------
+@extends('layouts.app') {{-- "Quiero usar el diseño general" --}}
+@section('content')
+    <h1>Mi Título</h1>
+        
+     @include('partials.boton-social') {{-- "Inserta el botoncito aquí" --}}
+@endsection
+```
+
+
+## [sec 81] Controllers
+### video 329-335
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
