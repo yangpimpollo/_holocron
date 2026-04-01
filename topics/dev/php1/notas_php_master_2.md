@@ -11,7 +11,7 @@ graph LR
     classDef comments fill:#f1f8e9,stroke:#33691e,stroke-width:2px;
 
     %% Nodos con Info y HTML para Negritas
-    U["<b>USERS</b><hr/>+id: int<br/>+role: string<br/>+name: string<br/>+email: string<br/>+password: string<br/>+image: string<br/>+created_at: dt<br/>+updated_at: dt"]:::users
+    U["<b>USERS</b><hr/>+id: int<br/>+role: string<br/>+name: string<br/>+email: string<br/>+password: string<br/>+image: string<br/>+created_at: dt<br/>+updated_at: dt<br/>+remember_token: string"]:::users
 
     I["<b>IMAGES</b><hr/>+id: int<br/>+user_id: int<br/>+image_path: str<br/>+description: str<br/>+created_at: dt<br/>+updated_at: dt"]:::images
 
