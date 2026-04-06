@@ -91,4 +91,22 @@ php artisan make:seeder NombreSeeder
 php artisan migrate
 php artisan db:seed
 php artisan serve
-php artisan storage:link       
+php artisan storage:link
+
+
+## ROADMAP de APIs Backend con Laravel
+
+| Nivel | Tema | Qué vas a aprender | Tiempo aprox. |
+| :--- | :--- | :--- | :--- |
+| 1 | **Fundamentos** | Rutas, respuestas JSON, Hello World | 1-2 días |
+| 2 | **Controladores y Estructura** | Controladores, Resource Controllers, Request | 2-3 días |
+| 3 | **Base de datos** | Migraciones, Modelos Eloquent, Seeders, Factories | 4-5 días |
+| 4 | **CRUD completo** | Create, Read, Update, Delete con validación | 3-4 días |
+| 5 | **Autenticación** | Laravel Sanctum (tokens) + Login/Register | 4-5 días |
+| 6 | **Mejores prácticas** | API Resources, Form Requests, Middleware, Policies | 5-6 días |
+| 7 | **Relaciones y consultas** | Relaciones Eloquent (1:1, 1:n, n:n), Query Builder | 5 días |
+| 8 | **Seguridad y optimización** | Rate limiting, CORS, Logging, Pagination, Caching | 4 días |
+| 9 | **Testing** | PHPUnit + Feature Tests + Mocking | 5-7 días |
+| 10 | **Avanzado / Producción** | Queues, Events, Notifications, Docker, Deployment | 1-2 semanas |
+
+
